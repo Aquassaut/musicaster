@@ -1,9 +1,9 @@
-var http = require('http');
+var http = require('http'),
     fs = require('fs'),
     rss = require('rss'),
     watch = require('node-watch'),
-    log = require('npmlog-ts');
-
+    log = require('npmlog-ts'),
+    cfg = require('./config.json');
 log.timestamp = true;
 
 /**
@@ -13,39 +13,41 @@ log.timestamp = true;
  */
 
 /* The RSS feed */
-var feed = new rss({
-    title: 'Aqua\'s playlist',
-    description: 'My playlist yo',
-    feed_url: 'http://aquassaut.pwnz.org:3333',
-    site_url: 'http://aquassaut.pwnz.org:3333',
-});
+var feed = new rss(cfg.feed);
 
 function discover(feed) {
     log.info('resource discovery', 'Starting discovery');
     log.info('resource discovery', 'Flushing items');
     feed.items = [];
 
-    var folders = fs.readdirSync("./music").filter(function(folder) {
-        return fs.statSync("./music/" + folder).isDirectory() && fs.existsSync("./music/" + folder + "/output_MP3WRAP.mp3");
+    var wdir = cfg.music_folder + "/";
+    var fname = "/" + cfg.episode_name;
+
+    var folders = fs.readdirSync(wdir).filter(function(folder) {
+        return fs.statSync(wdir + folder).isDirectory() &&
+               fs.existsSync(wdir + folder + fname);
     });
 
-    log.info('resource discovery', 'Found %d folders in ./music: %j', folders.length, folders);
+    log.info(
+        'resource discovery', 'Found %d folders in %s: %j',
+        folders.length, wdir, folders
+    );
 
     for (var i = 0; i < folders.length; i += 1) {
         var folder = folders[i];
 
-        var file = "./music/" + folder + "/output_MP3WRAP.mp3";
+        var file = wdir + folder + fname;
         var mtime = fs.statSync(file).mtime
 
         var item = {
             title: folder,
-            description: (folder + ' Album'),
+            description: folder + ' Album',
             guid: folder,
-            url: ('http://aquassaut.pwnz.org:3333/' + folder),
+            url: cfg.feed.feed_url + folder,
             date: mtime,
             enclosure: {
-                url: ('http://aquassaut.pwnz.org:3333/' + folder),
-                file:'./music/' + folder + '/output_MP3WRAP.mp3'
+                url: cfg.feed.feed_url + folder,
+                file: file
             }
         }
         log.info('resource discovery', 'adding item to feed: %s', item.title);
@@ -54,8 +56,8 @@ function discover(feed) {
     }
     return feed.xml();
 }
-var xml = discover(feed);
 
+var xml = discover(feed);
 
 /* Server part */
 http.createServer(function (req, res) {
@@ -64,8 +66,8 @@ http.createServer(function (req, res) {
         res.end(xml);
     } else {
         var resource = req.url.slice(1 + req.url.lastIndexOf("/"));
-        var rdir = "./music/" + resource;
-        var rpath = rdir + "/output_MP3WRAP.mp3";
+        var rdir = cfg.music_folder + "/" + resource;
+        var rpath = rdir + "/" + cfg.episode_name;
         var rsize = fs.statSync(rpath).size
         if (fs.existsSync(rdir) && fs.existsSync(rdir)) {
             res.writeHead(200, {
@@ -78,18 +80,18 @@ http.createServer(function (req, res) {
             res.end();
         }
     }
-    debugger;
-    log.info('server', '[%s] %s %s (%d)', req.connection.remoteAddress, req.method, req.url, res.statusCode);
+    log.info(
+        'server', '[%s] %s %s (%d)',
+        req.connection.remoteAddress, req.method, req.url, res.statusCode
+    );
 
-}).listen(3333, function() {
-    log.info('server', 'Server listening on port 3333');
+}).listen(cfg.port, function() {
+    log.info('server', 'Server listening on port %d', cfg.port);
 });
 
 /* Directory watcher part */
-watch('./music', function(filename) {
+watch(cfg.music_folder, function(filename) {
     log.info('watcher', '%s changed on disk, rebuilding feed', filename);
     xml = discover(feed);
 });
-
-
 

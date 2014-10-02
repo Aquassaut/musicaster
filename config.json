@@ -1,0 +1,11 @@
+{
+    "port": 3333,
+    "music_folder": "./music",
+    "episode_name": "output_MP3WRAP.mp3",
+    "feed": {
+        "feed_title": "My playlist",
+        "description": "As the title suggests",
+        "feed_url": "http://aquassaut.pwnz.org:3333",
+        "site_url": "http://aquassaut.pwnz.org:3333"
+    }
+}
