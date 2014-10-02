@@ -9,12 +9,11 @@ log.timestamp = true;
 /**
  *  TODO:
  *  Make sure there's a auto mp3wrap
- *  auto download stuff
+ *  Auto download stuff
+ *  Use asynchronous things (really needed ? I mean stating stuff is pretty fast)
  */
 
-/* The RSS feed */
-var feed = new rss(cfg.feed);
-
+/* RSS part */
 function discover(feed) {
     log.info('resource discovery', 'Starting discovery');
     log.info('resource discovery', 'Flushing items');
@@ -57,6 +56,7 @@ function discover(feed) {
     return feed.xml();
 }
 
+var feed = new rss(cfg.feed);
 var xml = discover(feed);
 
 /* Server part */
