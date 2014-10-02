@@ -2,9 +2,8 @@ var http = require('http'),
     fs = require('fs'),
     rss = require('rss'),
     watch = require('node-watch'),
-    log = require('npmlog-ts'),
+    log = require('npmlog'),
     cfg = require('./config.json');
-log.timestamp = true;
 
 /**
  *  TODO:
