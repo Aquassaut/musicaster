@@ -1,0 +1,16 @@
+{
+  "name": "podcast-hack",
+  "version": "1.0.0",
+  "description": "A hack to get my music on my android podcast player",
+  "main": "app.js",
+  "dependencies": {
+    "npmlog-ts": "^0.0.1",
+    "rss": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "aquassaut",
+  "license": "CeCILL-B"
+}
