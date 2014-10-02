@@ -11,6 +11,8 @@ log.timestamp = true;
  *  Make sure there's a auto mp3wrap
  *  Auto download stuff
  *  Use asynchronous things (really needed ? I mean stating stuff is pretty fast)
+ *  Rename shit. is it rname, fname, rpath, etc. This shit is less than 100 lines and
+ *      it's already confusing
  */
 
 /* RSS part */
