@@ -1,13 +1,13 @@
 var http = require('http');
-var fs = require('fs');
-var rss = require('rss');
-var log = require('npmlog-ts');
+    fs = require('fs'),
+    rss = require('rss'),
+    watch = require('node-watch'),
+    log = require('npmlog-ts');
+
 log.timestamp = true;
 
 /**
  *  TODO:
- *  A caching mechanism so that we just update the feed.
- *  Maybe have a sqlite on the side ?
  *  Make sure there's a auto mp3wrap
  *  auto download stuff
  */
@@ -48,16 +48,18 @@ function discover(feed) {
                 file:'./music/' + folder + '/output_MP3WRAP.mp3'
             }
         }
-        log.info('resource discovery', 'adding item to feed %j', item);
+        log.info('resource discovery', 'adding item to feed: %s', item.title);
         
         feed.item(item);
     }
     return feed.xml();
 }
+var xml = discover(feed);
 
+
+/* Server part */
 http.createServer(function (req, res) {
     if (req.url === "/") {
-        var xml = discover(feed);
         res.writeHead(200, {'Content-Type': 'text/xml; charset=UTF-8'});
         res.end(xml);
     } else {
@@ -66,7 +68,10 @@ http.createServer(function (req, res) {
         var rpath = rdir + "/output_MP3WRAP.mp3";
         var rsize = fs.statSync(rpath).size
         if (fs.existsSync(rdir) && fs.existsSync(rdir)) {
-            res.writeHead(200, {'Content-Type': 'audio/mpeg'});
+            res.writeHead(200, {
+                'Content-Type': 'audio/mpeg',
+                'Content-Length': rsize
+            });
             fs.createReadStream(rpath).pipe(res);
         } else {
             res.writeHead(404);
@@ -79,3 +84,12 @@ http.createServer(function (req, res) {
 }).listen(3333, function() {
     log.info('server', 'Server listening on port 3333');
 });
+
+/* Directory watcher part */
+watch('./music', function(filename) {
+    log.info('watcher', '%s changed on disk, rebuilding feed', filename);
+    xml = discover(feed);
+});
+
+
+
