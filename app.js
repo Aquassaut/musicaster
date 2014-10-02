@@ -69,8 +69,8 @@ http.createServer(function (req, res) {
         var resource = req.url.slice(1 + req.url.lastIndexOf("/"));
         var rdir = cfg.music_folder + "/" + resource;
         var rpath = rdir + "/" + cfg.episode_name;
-        var rsize = fs.statSync(rpath).size
         if (fs.existsSync(rdir) && fs.existsSync(rpath)) {
+            var rsize = fs.statSync(rpath).size
             res.writeHead(200, {
                 'Content-Type': 'audio/mpeg',
                 'Content-Length': rsize
