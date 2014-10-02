@@ -43,10 +43,10 @@ function discover(feed) {
             title: folder,
             description: folder + ' Album',
             guid: folder,
-            url: cfg.feed.feed_url + folder,
+            url: cfg.feed.feed_url + "/" + folder,
             date: mtime,
             enclosure: {
-                url: cfg.feed.feed_url + folder,
+                url: cfg.feed.feed_url + "/" + folder,
                 file: file
             }
         }
