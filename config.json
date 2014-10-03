@@ -3,7 +3,7 @@
     "music_folder": "./music",
     "episode_name": "output_MP3WRAP.mp3",
     "feed": {
-        "feed_title": "My playlist",
+        "title": "Aquassaut's playlist",
         "description": "As the title suggests",
         "feed_url": "http://aquassaut.pwnz.org:3333",
         "site_url": "http://aquassaut.pwnz.org:3333"
