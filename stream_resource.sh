@@ -18,4 +18,4 @@ esac
 
 cd "$DIR"
 
-ffmpeg -v fatal -f concat -i <(list_escaped_files) -f mp3 -c copy -
+exec ffmpeg -v fatal -f concat -i <(list_escaped_files) -f mp3 -c copy -

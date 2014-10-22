@@ -15,17 +15,17 @@ var http = require('http'),
 
 /* Stream part */
 http.ServerResponse.prototype.stream = function(rpath) {
-    // Using bash for free process sub
-    var ffmpeg_process = spawn("stream_resource.sh", [rpath]);
-    ffmpeg_process.on("error", function(error) {
+    var streaming_process = spawn("stream_resource.sh", [rpath]);
+    streaming_process.on("error", function(error) {
         log.error("File stream", 'Streaming of resource %s returned error %j', rpath, error);
         this.writeHead(500);
         this.end();
     });
-    ffmpeg_process.stdout.pipe(this);
-    ffmpeg_process.stderr.on("data", function(data) {
+    streaming_process.stdout.pipe(this);
+    streaming_process.stderr.on("data", function(data) {
         log.error("Spawned ffmpeg", data.toString());
     });
+    return streaming_process;
 }
 
 /* RSS part */
@@ -81,7 +81,11 @@ http.createServer(function (req, res) {
             res.writeHead(200, {
                 'Content-Type': 'audio/mpeg',
             });
-            res.stream(resource);
+            child = res.stream(resource);
+            req.on('close', function() {
+                log.info("server", "Requester hung up, killing streaming process %d", child.pid);
+                child.kill("SIGHUP");
+            });
         } else {
             res.writeHead(404);
             res.end();
