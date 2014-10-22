@@ -1,6 +1,7 @@
 var http = require('http'),
     fs = require('fs'),
     rss = require('rss'),
+    spawn = require('child_process').spawn,
     watch = require('node-watch'),
     log = require('npmlog'),
     cfg = require('./config.json');
@@ -12,7 +13,23 @@ var http = require('http'),
  *  Use asynchronous things (really needed ? I mean stating stuff is pretty fast)
  *  Rename shit. is it rname, fname, rpath, etc. This shit is less than 100 lines and
  *      it's already confusing
+ *  Prevent watcher to get crazy when copying a big file over
  */
+
+/* Stream part */
+http.ServerResponse.prototype.stream = function(rpath) {
+    // Using bash for free process sub
+    var ffmpeg_process = spawn("stream_resource.sh", [rpath]);
+    ffmpeg_process.on("error", function(error) {
+        log.error("File stream", 'Streaming of resource %s returned error %j', rpath, error);
+        this.writeHead(500);
+        this.end();
+    });
+    ffmpeg_process.stdout.pipe(this);
+    ffmpeg_process.stderr.on("data", function(data) {
+        log.error("Spawned ffmpeg", data.toString());
+    });
+}
 
 /* RSS part */
 function discover(feed) {
@@ -21,11 +38,9 @@ function discover(feed) {
     feed.items = [];
 
     var wdir = cfg.music_folder + "/";
-    var fname = "/" + cfg.episode_name;
 
     var folders = fs.readdirSync(wdir).filter(function(folder) {
-        return fs.statSync(wdir + folder).isDirectory() &&
-               fs.existsSync(wdir + folder + fname);
+        return fs.statSync(wdir + folder).isDirectory();
     });
 
     log.info(
@@ -36,8 +51,7 @@ function discover(feed) {
     for (var i = 0; i < folders.length; i += 1) {
         var folder = folders[i];
 
-        var file = wdir + folder + fname;
-        var mtime = fs.statSync(file).mtime
+        var mtime = fs.statSync(wdir + folder).mtime
 
         var item = {
             title: folder,
@@ -47,7 +61,6 @@ function discover(feed) {
             date: mtime,
             enclosure: {
                 url: cfg.feed.feed_url + "/" + folder,
-                file: file
             }
         }
         log.info('resource discovery', 'adding item to feed: %s', item.title);
@@ -66,16 +79,12 @@ http.createServer(function (req, res) {
         res.writeHead(200, {'Content-Type': 'text/xml; charset=UTF-8'});
         res.end(xml);
     } else {
-        var resource = req.url.slice(1 + req.url.lastIndexOf("/"));
-        var rdir = cfg.music_folder + "/" + resource;
-        var rpath = rdir + "/" + cfg.episode_name;
-        if (fs.existsSync(rdir) && fs.existsSync(rpath)) {
-            var rsize = fs.statSync(rpath).size
+        var resource = cfg.music_folder + "/" + req.url.slice(1 + req.url.lastIndexOf("/"));
+        if (fs.existsSync(resource)) {
             res.writeHead(200, {
                 'Content-Type': 'audio/mpeg',
-                'Content-Length': rsize
             });
-            fs.createReadStream(rpath).pipe(res);
+            res.stream(resource);
         } else {
             res.writeHead(404);
             res.end();
