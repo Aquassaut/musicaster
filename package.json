@@ -1,6 +1,6 @@
 {
   "name": "podcast-hack",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A hack to get my music on my android podcast player",
   "main": "app.js",
   "dependencies": {
