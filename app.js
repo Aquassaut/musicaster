@@ -1,8 +1,10 @@
 var http = require('http'),
     fs = require('fs'),
     watch = require('node-watch'),
+    path = require('path'),
     log = require('npmlog'),
-    cfg = require('./config.json');
+    url = require('url'),
+    cfg = require('./config.json'),
     streamDirectoryContent = require('./stream.js'),
     generateFeed = require('./feed.js');
 
@@ -16,12 +18,14 @@ var xml = generateFeed();
 
 /* Server part */
 http.createServer(function (req, res) {
-    if (req.url === "/") {
+    if (req.url === '/') {
         res.writeHead(200, {'Content-Type': 'text/xml; charset=UTF-8'});
         res.end(xml);
     } else {
-        var resource = cfg.music_folder + "/" + req.url.slice(1 + req.url.lastIndexOf("/"));
-        if (fs.existsSync(resource)) {
+        var queried = url.parse(req.url).path.slice(1);
+        var directory = path.resolve(cfg.music_folder, queried);
+        log.info("debug", directory);
+        if (fs.existsSync(directory)) {
             res.writeHead(200, {
                 'Content-Type': 'audio/mpeg',
             });
