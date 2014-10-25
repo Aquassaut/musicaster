@@ -12,7 +12,7 @@ function deleteTempFile(file) {
     });
 }
 
-function streamDirectoryContent(directory, output) {
+function streamDirectoryContent(directory, res) {
     fs.readdir(directory, function(err, files) {
         if (err) {
             log.error("readdir", err.message);
@@ -28,12 +28,12 @@ function streamDirectoryContent(directory, output) {
             line = util.format("file '%s'", fpath);
             return acc + line + '\n';
         }, ''), 'utf8', function() {
-            _createAudioStream(inputfile.path, output);
+            _createAudioStream(inputfile.path, res);
         });
     });
 }
 
-function _createAudioStream(input, output) {
+function _createAudioStream(input, res) {
     var cmd = ffmpeg(input);
     var tmpstream = null;
     cmd.inputFormat('concat')
@@ -47,17 +47,17 @@ function _createAudioStream(input, output) {
     });
     cmd.on('error', function(err) {
         log.error('ffmpeg error', err.message);
-        if (!output._header) {
+        if (!res._header) {
             // Maybe we've got a chance to alert the caller by sending a 500
-            output.writeHead(500);
-        e   output.end();
+            res.writeHead(500);
+            res.end();
         }
         deleteTempFile(input);
     });
     cmd.on('codecData', function(data) {
         log.info("ffmpeg command", "command passed, piping output");
         output.writeHead(200, { 'Content-Type': 'audio/mpeg' });
-        tmpstream.pipe(output);
+        tmpstream.pipe(res);
         deleteTempFile(input);
     });
     tmpstream = cmd.pipe();
