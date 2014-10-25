@@ -8,7 +8,10 @@ var log = require('npmlog'),
 
 function streamDirectoryContent(directory, output) {
     fs.readdir(directory, function(err, files) {
-        if (err) throw err;
+        if (err) {
+            log.error("readdir", err.message);
+            return;
+        }
         
         var inputfile = tmp.createWriteStream();
 
