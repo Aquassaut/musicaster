@@ -18,12 +18,20 @@ function streamDirectoryContent(directory, res) {
             log.error("readdir", err.message);
             return;
         }
+        files = files.filter(function(file) {
+            return !!file.match(/\.mp3$/);
+        });
+
+        if (files.length === 0) {
+            //empty dir ? 204 No-content
+            res.writeHead(204);
+            res.end();
+            return;
+        }
         
         var inputfile = tmp.createWriteStream();
 
-        inputfile.end(files.filter(function(file) {
-            return !!file.match(/\.mp3$/);
-        }).sort().reduce(function(acc, file) {
+        inputfile.end(.sort().reduce(function(acc, file) {
             var fpath = path.join(directory, file).replace("'", "\\'");
             line = util.format("file '%s'", fpath);
             return acc + line + '\n';
