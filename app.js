@@ -26,9 +26,6 @@ http.createServer(function (req, res) {
         var directory = path.resolve(cfg.music_folder, queried);
         log.info("debug", directory);
         if (fs.existsSync(directory)) {
-            res.writeHead(200, {
-                'Content-Type': 'audio/mpeg',
-            });
             streamDirectoryContent(directory, res);
         } else {
             res.writeHead(404);
