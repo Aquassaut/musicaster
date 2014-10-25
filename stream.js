@@ -35,6 +35,7 @@ function streamDirectoryContent(directory, output) {
 
 function _createAudioStream(input, output) {
     var cmd = ffmpeg(input);
+    var tmpstream = null;
     cmd.inputFormat('concat')
         .outputFormat('mp3')
         .audioCodec('copy');
@@ -43,17 +44,23 @@ function _createAudioStream(input, output) {
     });
     cmd.on('end', function() {
         log.info('ffmpeg', 'stream ended - cleaning temporary file %s', input);
-        //clean temp file
-        fs.unlink(input, function(err) {
-            if (err) log.error('temporary file cleaning', err.message);
-        });
-    })
-    cmd.on('error', function(err) {
-        log.info('ffmpeg error', err.message);
-        output.writeHead(500);
-        output.end();
     });
-    cmd.pipe(output);
+    cmd.on('error', function(err) {
+        log.error('ffmpeg error', err.message);
+        if (!output._header) {
+            // Maybe we've got a chance to alert the caller by sending a 500
+            output.writeHead(500);
+        e   output.end();
+        }
+        deleteTempFile(input);
+    });
+    cmd.on('codecData', function(data) {
+        log.info("ffmpeg command", "command passed, piping output");
+        output.writeHead(200, { 'Content-Type': 'audio/mpeg' });
+        tmpstream.pipe(output);
+        deleteTempFile(input);
+    });
+    tmpstream = cmd.pipe();
 }
 
 module.exports = streamDirectoryContent;
