@@ -42,7 +42,7 @@ function streamDirectoryContent(directory, res) {
 }
 
 function _createAudioStream(input, res) {
-    var cmd = ffmpeg(input);
+    var cmd = ffmpeg({source: input, logger: log});
     var tmpstream = null;
     cmd.inputFormat('concat')
         .outputFormat('mp3')
