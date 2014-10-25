@@ -1,9 +1,9 @@
 var http = require('http'),
     fs = require('fs'),
-    spawn = require('child_process').spawn,
     watch = require('node-watch'),
     log = require('npmlog'),
     cfg = require('./config.json');
+    streamDirectoryContent = require('./stream.js'),
     generateFeed = require('./feed.js');
 
 /**
@@ -12,22 +12,6 @@ var http = require('http'),
  *  Use asynchronous things (really needed ? I mean stating stuff is pretty fast)
  *  Prevent watcher to get crazy when copying a big file over
  */
-
-/* Stream part */
-http.ServerResponse.prototype.stream = function(rpath) {
-    var streaming_process = spawn("stream_resource.sh", [rpath]);
-    streaming_process.on("error", function(error) {
-        log.error("File stream", 'Streaming of resource %s returned error %j', rpath, error);
-        this.writeHead(500);
-        this.end();
-    });
-    streaming_process.stdout.pipe(this);
-    streaming_process.stderr.on("data", function(data) {
-        log.error("Spawned ffmpeg", data.toString());
-    });
-    return streaming_process;
-}
-
 var xml = generateFeed();
 
 /* Server part */
@@ -41,11 +25,7 @@ http.createServer(function (req, res) {
             res.writeHead(200, {
                 'Content-Type': 'audio/mpeg',
             });
-            child = res.stream(resource);
-            req.on('close', function() {
-                log.info("server", "Requester hung up, killing streaming process %d", child.pid);
-                child.kill("SIGHUP");
-            });
+            streamDirectoryContent(directory, res);
         } else {
             res.writeHead(404);
             res.end();

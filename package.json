@@ -4,9 +4,11 @@
   "description": "A hack to get my music on my android podcast player",
   "main": "app.js",
   "dependencies": {
+    "fluent-ffmpeg": "^2.0.0-rc2",
     "node-watch": "^0.3.4",
     "npmlog": "^0.1.1",
-    "rss": "^1.0.0"
+    "rss": "^1.0.0",
+    "temp": "^0.8.1"
   },
   "devDependencies": {},
   "scripts": {
