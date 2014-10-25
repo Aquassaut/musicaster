@@ -20,7 +20,6 @@ function streamDirectoryContent(directory, output) {
         }).sort().reduce(function(acc, file) {
             var fpath = path.join(directory, file).replace("'", "\\'");
             line = util.format("file '%s'", fpath);
-            log.info("ffmpeg script", line);
             return acc + line + '\n';
         }, ''), 'utf8', function() {
             _createAudioStream(inputfile.path, output);
