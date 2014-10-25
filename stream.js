@@ -37,7 +37,7 @@ function _createAudioStream(input, output) {
         log.info('ffmpeg', 'stream ended - cleaning temporary file %s', input);
         //clean temp file
         fs.unlink(input, function(err) {
-            log.error('temporary file cleaning', err.message);
+            if (err) log.error('temporary file cleaning', err.message);
         });
     })
     cmd.on('error', function(err) {
