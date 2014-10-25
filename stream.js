@@ -6,6 +6,12 @@ var log = require('npmlog'),
     ffmpeg = require('fluent-ffmpeg'),
     buffer = require ('buffer');
 
+function deleteTempFile(file) {
+    fs.unlink(file, function(err) {
+        if (err) log.error('temporary file cleaning', err.message);
+    });
+}
+
 function streamDirectoryContent(directory, output) {
     fs.readdir(directory, function(err, files) {
         if (err) {
