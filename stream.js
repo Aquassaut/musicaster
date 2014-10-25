@@ -56,7 +56,7 @@ function _createAudioStream(input, res) {
     });
     cmd.on('codecData', function(data) {
         log.info("ffmpeg command", "command passed, piping output");
-        output.writeHead(200, { 'Content-Type': 'audio/mpeg' });
+        res.writeHead(200, { 'Content-Type': 'audio/mpeg' });
         tmpstream.pipe(res);
         deleteTempFile(input);
     });
