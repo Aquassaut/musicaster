@@ -26,12 +26,13 @@ function streamDirectoryContent(directory, res) {
             //empty dir ? 204 No-content
             res.writeHead(204);
             res.end();
+            res.emit('sendStarted');
             return;
         }
         
         var inputfile = tmp.createWriteStream();
 
-        inputfile.end(.sort().reduce(function(acc, file) {
+        inputfile.end(files.sort().reduce(function(acc, file) {
             var fpath = path.join(directory, file).replace("'", "\\'");
             line = util.format("file '%s'", fpath);
             return acc + line + '\n';
@@ -55,10 +56,11 @@ function _createAudioStream(input, res) {
     });
     cmd.on('error', function(err) {
         log.error('ffmpeg error', err.message);
-        if (!res._header) {
+        if (!res.headersSent) {
             // Maybe we've got a chance to alert the caller by sending a 500
             res.writeHead(500);
             res.end();
+            res.emit('sendStarted');
         }
         deleteTempFile(input);
     });
@@ -66,6 +68,7 @@ function _createAudioStream(input, res) {
         log.info("ffmpeg command", "command passed, piping output");
         res.writeHead(200, { 'Content-Type': 'audio/mpeg' });
         tmpstream.pipe(res);
+        res.emit('sendStarted');
         deleteTempFile(input);
     });
     tmpstream = cmd.pipe();
