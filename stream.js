@@ -6,10 +6,42 @@ var log = require('npmlog'),
     ffmpeg = require('fluent-ffmpeg'),
     buffer = require ('buffer');
 
-function deleteTempFile(file) {
+function _deleteTempFile(file) {
     fs.unlink(file, function(err) {
         if (err) log.error('temporary file cleaning', err.message);
     });
+}
+
+function _createAudioStream(input, res) {
+    var cmd = ffmpeg({source: input, logger: log});
+    var tmpstream = null;
+    cmd.inputFormat('concat')
+        .outputFormat('mp3')
+        .audioCodec('copy');
+    cmd.on('start', function(line) {
+        log.info('ffmpeg command', line);
+    });
+    cmd.on('end', function() {
+        log.info('ffmpeg', 'stream ended - cleaning temporary file %s', input);
+    });
+    cmd.on('error', function(err) {
+        log.error('ffmpeg error', err.message);
+        if (!res.headersSent) {
+            // Maybe we've got a chance to alert the caller by sending a 500
+            res.writeHead(500);
+            res.end();
+            res.emit('sendStarted');
+        }
+        _deleteTempFile(input);
+    });
+    cmd.on('codecData', function(data) {
+        log.info("ffmpeg command", "command passed, piping output");
+        res.writeHead(200, { 'Content-Type': 'audio/mpeg' });
+        tmpstream.pipe(res);
+        res.emit('sendStarted');
+        _deleteTempFile(input);
+    });
+    tmpstream = cmd.pipe();
 }
 
 function streamDirectoryContent(directory, res) {
@@ -40,38 +72,6 @@ function streamDirectoryContent(directory, res) {
             _createAudioStream(inputfile.path, res);
         });
     });
-}
-
-function _createAudioStream(input, res) {
-    var cmd = ffmpeg({source: input, logger: log});
-    var tmpstream = null;
-    cmd.inputFormat('concat')
-        .outputFormat('mp3')
-        .audioCodec('copy');
-    cmd.on('start', function(line) {
-        log.info('ffmpeg command', line);
-    });
-    cmd.on('end', function() {
-        log.info('ffmpeg', 'stream ended - cleaning temporary file %s', input);
-    });
-    cmd.on('error', function(err) {
-        log.error('ffmpeg error', err.message);
-        if (!res.headersSent) {
-            // Maybe we've got a chance to alert the caller by sending a 500
-            res.writeHead(500);
-            res.end();
-            res.emit('sendStarted');
-        }
-        deleteTempFile(input);
-    });
-    cmd.on('codecData', function(data) {
-        log.info("ffmpeg command", "command passed, piping output");
-        res.writeHead(200, { 'Content-Type': 'audio/mpeg' });
-        tmpstream.pipe(res);
-        res.emit('sendStarted');
-        deleteTempFile(input);
-    });
-    tmpstream = cmd.pipe();
 }
 
 module.exports = streamDirectoryContent;
