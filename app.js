@@ -32,7 +32,6 @@ http.createServer(function (req, res) {
     } else {
         var queried = url.parse(req.url).path.slice(1);
         var directory = path.resolve(cfg.music_folder, queried);
-        log.info("debug", directory);
         fs.exists(directory, function() {
             if (fs.existsSync(directory)) {
                 streamDirectoryContent(directory, res);
