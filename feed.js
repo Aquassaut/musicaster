@@ -42,8 +42,10 @@ function discover() {
 
         feed.item(item);
     }
+    feed.items.sort(function(x, y) {
+        return x.date < y.date;
+    });
     return feed.xml();
 }
 module.exports = discover;
-
 
