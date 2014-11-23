@@ -27,10 +27,10 @@ http.createServer(function (req, res) {
     });
     if (req.url === '/') {
         res.writeHead(200, {'Content-Type': 'text/xml; charset=UTF-8'});
-        res.end(xml);
+        res.end(xml.replace(/@@HOST@@/g, (req.headers.host || cfg.site_url)));
         res.emit('sendStarted');
     } else {
-        var queried = url.parse(req.url).path.slice(1);
+        var queried = url.parse(req.url.replace(/\.mp3$/g, '')).path.slice(1);
         var directory = path.resolve(cfg.music_folder, queried);
         fs.exists(directory, function() {
             if (fs.existsSync(directory)) {
