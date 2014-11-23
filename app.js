@@ -2,6 +2,7 @@ var http = require('http'),
     fs = require('fs'),
     watch = require('node-watch'),
     path = require('path'),
+    util = require('util'),
     log = require('npmlog'),
     url = require('url'),
     cfg = require('./config.json'),
@@ -15,6 +16,10 @@ var http = require('http'),
  *  Prevent watcher to get crazy when copying a big file over
  */
 
+//Fix music folder setting so we accept string, but work with array
+if (! util.isArray(cfg.music_folder)) {
+    cfg.music_folder = [ cfg.music_folder ];
+}
 var xml = generateFeed();
 
 /* Server part */
@@ -31,11 +36,16 @@ http.createServer(function (req, res) {
         res.emit('sendStarted');
     } else {
         var queried = url.parse(req.url.replace(/\.mp3$/g, '')).path.slice(1);
-        var directory = path.resolve(cfg.music_folder, queried);
-        fs.exists(directory, function() {
+        var found = false;
+        cfg.music_folder.forEach(function(folder, idx, ary) {
+            if (found) return;
+            log.info('matcher', 'Trying to find %s in %s', queried, folder);
+            var isLastFolder = (idx === ary.length - 1);
+            var directory = path.resolve(folder, queried);
             if (fs.existsSync(directory)) {
+                found = true;
                 streamDirectoryContent(directory, res);
-            } else {
+            } else if (isLastFolder) {
                 res.writeHead(404);
                 res.end();
                 res.emit('sendStarted');

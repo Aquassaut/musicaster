@@ -12,19 +12,26 @@ function discover() {
     log.info('resource discovery', 'Flushing items');
     feed.items = [];
     
-    var wd = cfg.music_folder;
+    var wds = cfg.music_folder;
     var baseurl = "http://@@HOST@@" + (cfg.port !== 80 ? "" : (":" + cfg.port));
 
-    var dirs = fs.readdirSync(wd).map(function(file) {
-        var s = fs.statSync(path.join(wd, file));
-        s.name = file;
-        return s;
-    }).filter(function(file) {
+    var dirs = [];
+    
+    wds.forEach(function(wd) {
+        var content = fs.readdirSync(wd);
+        content.forEach(function(file) {
+            var s = fs.statSync(path.join(wd, file));
+            s.name = file;
+            dirs.push(s);
+        });
+    });
+    
+    dirs = dirs.filter(function(file) {
         return file.isDirectory();
     }).sort(function(d1, d2) {
         return d1.mtime < d2.mtime; 
     });
-    log.info('resource discovery', 'Found %d dirs in %s', dirs.length, wd);
+    log.info('resource discovery', 'Found %d dirs in music dirs', dirs.length);
 
     for (var i = 0; i < dirs.length; i += 1) {
         var dir = dirs[i];

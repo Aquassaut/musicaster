@@ -1,6 +1,6 @@
 {
     "port": 3333,
-    "music_folder": "./music",
+    "music_folder": ["./music", "/media/adrive/music"],
     "feed": {
         "title": "Aquassaut's playlist",
         "description": "As the title suggests",
