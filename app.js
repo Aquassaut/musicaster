@@ -47,8 +47,11 @@ http.createServer(function (req, res) {
 });
 
 /* Directory watcher part */
-watch(cfg.music_folder, function(filename) {
+watch(cfg.music_folder, {
+    followSymLinks: true,
+    maxSymLevel: 10
+}, function(filename) {
     log.info('watcher', '%s changed on disk, rebuilding feed', filename);
-    xml = generateFeed()
+    xml = generateFeed();
 });
 
