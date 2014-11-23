@@ -4,7 +4,7 @@
     "feed": {
         "title": "Aquassaut's playlist",
         "description": "As the title suggests",
-        "feed_url": "http://aquassaut.pwnz.org:3333",
-        "site_url": "http://aquassaut.pwnz.org:3333"
+        "feed_url": "http://aquassaut.pwnz.org",
+        "site_url": "http://aquassaut.pwnz.org"
     }
 }
