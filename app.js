@@ -20,7 +20,8 @@ var http = require('http'),
 if (! util.isArray(cfg.music_folder)) {
     cfg.music_folder = [ cfg.music_folder ];
 }
-var xml = generateFeed();
+var xml = "generating xml...";
+generateFeed().then(function(output) { xml = output; });
 
 /* Server part */
 http.createServer(function (req, res) {
@@ -62,6 +63,7 @@ watch(cfg.music_folder, {
     maxSymLevel: 10
 }, function(filename) {
     log.info('watcher', '%s changed on disk, rebuilding feed', filename);
-    xml = generateFeed();
+    generateFeed().then(function(output) { xml = output; });
+    //xml = generateFeed();
 });
 
