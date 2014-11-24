@@ -12,7 +12,7 @@ var http = require('http'),
 /**
  *  TODO:
  *  Auto download stuff
- *  Use asynchronous things (really needed ? I mean stating stuff is pretty fast)
+ *  Use more async calls with promises.
  *  Prevent watcher to get crazy when copying a big file over
  */
 
@@ -64,6 +64,5 @@ watch(cfg.music_folder, {
 }, function(filename) {
     log.info('watcher', '%s changed on disk, rebuilding feed', filename);
     generateFeed().then(function(output) { xml = output; });
-    //xml = generateFeed();
 });
 
