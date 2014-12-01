@@ -31,5 +31,6 @@ To start, simply run `npm install` to install the dependencies, and `npm start` 
 
 ## License
 This application is distributed under the [Cecill-B license](http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html).
+
 TL;DR: MIT-style license, with more words, because in France, we love paperwork.
 
