@@ -11,7 +11,6 @@ var http = require('http'),
 
 /**
  *  TODO:
- *  Auto download stuff
  *  Use more async calls with promises.
  *  Prevent watcher to get crazy when copying a big file over
  */
