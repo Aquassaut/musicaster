@@ -65,7 +65,7 @@ function streamDirectoryContent(directory, res) {
         var inputfile = tmp.createWriteStream();
 
         inputfile.end(files.sort().reduce(function(acc, file) {
-            var fpath = path.join(directory, file).replace("'", "\\'");
+            var fpath = path.join(directory, file).replace("'", "'\\''");
             line = util.format("file '%s'", fpath);
             return acc + line + '\n';
         }, ''), 'utf8', function() {
