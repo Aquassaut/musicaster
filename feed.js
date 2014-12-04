@@ -44,10 +44,10 @@ function discover() {
     }).then(function(dirs) {
         return dirs.filter(function(file) {
             return file.isDirectory();
-        })
+        });
     }).then(function(dirs) {
         return dirs.sort(function(d1, d2) {
-            return d1.mtime < d2.mtime; 
+            return d2.mtime.getTime() - d1.mtime.getTime(); 
         });
     }).then(function(dirs) {
         var feed = new rss(cfg.feed);
@@ -76,3 +76,5 @@ function discover() {
 }
 
 module.exports = discover;
+
+discover();
