@@ -34,7 +34,7 @@ http.createServer(function (req, res) {
         res.end(xml.replace(/@@HOST@@/g, (req.headers.host || cfg.site_url)));
         res.emit('sendStarted');
     } else {
-        var queried = url.parse(req.url.replace(/\.mp3$/g, '')).path.slice(1);
+        var queried = url.parse(decodeURI(req.url).replace(/\.mp3$/g, '')).path.slice(1);
         var found = false;
         cfg.music_folder.forEach(function(folder, idx, ary) {
             if (found) return;
