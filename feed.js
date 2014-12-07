@@ -76,5 +76,3 @@ function discover() {
 }
 
 module.exports = discover;
-
-discover();
