@@ -20,7 +20,6 @@ if (! util.isArray(cfg.music_folder)) {
     cfg.music_folder = [ cfg.music_folder ];
 }
 var xml = "generating xml...";
-generateFeed().then(function(output) { xml = output; });
 
 /* Server part */
 http.createServer(function (req, res) {
