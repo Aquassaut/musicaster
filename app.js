@@ -57,11 +57,23 @@ http.createServer(function (req, res) {
 });
 
 /* Directory watcher part */
-watch(cfg.music_folder, {
-    followSymLinks: true,
-    maxSymLevel: 10
-}, function(filename) {
-    log.info('watcher', '%s changed on disk, rebuilding feed', filename);
-    generateFeed().then(function(output) { xml = output; });
-});
+var regenerator = (function() {
+    var _generate = function() {
+        log.info("feed generation", "generating feed");
+        generateFeed().then(function(output) { xml = output; });
+    }
+    var build = setTimeout(_generate, 1);
+    return function(filename) {
+        if (build._idleNext !== null) {
+            // A build is planned, cancelling it
+            log.info('watcher', 'new changes on %s, delaying generation', filename);
+            build.close();
+        } else {
+            log.info('watcher', '%s changed on disk, queuing generation', filename);
+        }
+        build = setTimeout(_generate, 5000);
+    };
+})();
+
+watch(cfg.music_folder, { followSymLinks:true, maxSymLevel:10 }, regenerator);
 
