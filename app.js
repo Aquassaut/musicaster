@@ -58,19 +58,35 @@ http.createServer(function (req, res) {
 /* Directory watcher part */
 var regenerator = (function() {
     var _generate = function() {
+        if (buildlater) {
+            buildlater = false;
+            build.close();
+            build = setTimeout(_generate, timeout);
+            return;
+        }
         log.info("feed generation", "generating feed");
         generateFeed().then(function(output) { xml = output; });
+        buildlater = false;
+        timeout = 5000;
     }
+
     var build = setTimeout(_generate, 1);
+    var timeout = 5000;
+    var buildlater = false;
+
     return function(filename) {
-        if (build._idleNext !== null) {
-            // A build is planned, cancelling it
-            log.info('watcher', 'new changes on %s, delaying generation', filename);
-            build.close();
+        if (buildlater) {
+            return;
+        } else if (build._idleNext !== null) {
+            //build already queued
+            log.info('watcher', 'Quick changes detected in filesystem, waiting before taking action');
+            timeout *= 2;
+            buildlater = true;
         } else {
-            log.info('watcher', '%s changed on disk, queuing generation', filename);
+            log.info('watcher', '%s changed on disk, queuing RSS regeneration', filename);
         }
-        build = setTimeout(_generate, 5000);
+        build.close();
+        build = setTimeout(_generate, timeout);
     };
 })();
 
