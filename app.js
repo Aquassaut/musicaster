@@ -1,5 +1,5 @@
 var log = require('npmlog'),
-    cfg = require('./lib/config.json'),
+    cfg = require('./config.json'),
     server = require('./lib/server.js'),
     watcher = require('./lib/watcher.js'),
     feed = require('./lib/feed.js');
