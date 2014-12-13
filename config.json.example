@@ -1,0 +1,11 @@
+{
+    "port": "port",
+    "music_folder": "/path/to/single/folder",
+    "music_folder": ["/path/to/folder", "path/to/other/folder"],
+    "feed": {
+        "title": "The title of your feed",
+        "description": "A description of your feed",
+        "feed_url": "The URL of your feed",
+        "site_url": "The URL of your website"
+    }
+}

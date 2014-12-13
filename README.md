@@ -26,6 +26,8 @@ This app looks for a config.json file with the following object:
   * *feed_url*: the URL your feed will be accessible from
   * *site_url*: the URL your website will be accessible from. It can be the same as feed_url, but not necessarly.
 
+To get started with this config file, you can run `cp config.json.example config.json; $EDITOR config.json` and start from there.
+
 ## Getting started
 To start, simply run `npm install` to install the dependencies, and `npm start` to launch the daemon.
 
