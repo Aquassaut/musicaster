@@ -6,7 +6,7 @@ var log = require('npmlog'),
 
 /**
  *  TODO:
- *  Use more async calls with promises.
+ *  Use more async calls
  */
 
 var xml = "generating xml...";
@@ -27,6 +27,5 @@ watcher.startWatching(folders, function() {
         webserver.reloadXml(xml);
     });
 });
-
 
 
