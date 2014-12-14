@@ -1,8 +1,26 @@
 {
-  "name": "podcast-hack",
+  "name": "musicaster",
   "version": "0.1.0",
-  "description": "A hack to get my music on my android podcast player",
+  "description": "Podcast your music directory.",
+  "author": "aquassaut",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha",
+    "testmon": "./node_modules/mocha/bin/mocha --watch --reporter min",
+    "start": "node lib/app.js"
+  },
   "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Aquassaut/musicaster"
+  },
+  "bugs": {
+      "url": "https://github.com/Aquassaut/musicaster/issues"
+  },
+  "keywords": [
+    "podcast",
+    "music",
+    "streaming"
+  ],
   "dependencies": {
     "fluent-ffmpeg": "^2.0.0-rc2",
     "node-watch": "^0.3.4",
@@ -14,11 +32,6 @@
     "mocha": "^2.0.1",
     "rewire": "^2.1.3"
   },
-  "scripts": {
-    "test": "./node_modules/mocha/bin/mocha",
-    "testmon": "./node_modules/mocha/bin/mocha --watch --reporter min",
-    "start": "node lib/app.js"
-  },
-  "author": "aquassaut",
+  "preferGlobal": false,
   "license": "CeCILL-B"
 }
