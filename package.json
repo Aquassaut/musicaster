@@ -15,7 +15,7 @@
     "rewire": "^2.1.3"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "./node_modules/mocha/bin/mocha",
     "start": "node lib/app.js"
   },
   "author": "aquassaut",
