@@ -6,7 +6,7 @@
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha",
     "testmon": "./node_modules/mocha/bin/mocha --watch --reporter min",
-    "start": "node lib/app.js"
+    "start": "node app.js"
   },
   "main": "app.js",
   "repository": {
