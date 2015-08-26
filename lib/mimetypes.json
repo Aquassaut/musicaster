@@ -1,0 +1,23 @@
+[
+    {
+        "name": "mp3",     
+        "extension": "\\.mp3$",
+        "mimetype": "audio/mpeg"
+    }, {
+        "name": "aac",     
+        "extension": "\\.aac$",
+        "mimetype": "audio/aac"
+    }, {
+        "name": "m4a",     
+        "extension": "\\.m4a$",
+        "mimetype": "audio/aac"
+    }, {
+        "name": "ogg",
+        "extension": "\\.ogg$",
+        "mimetype": "audio/ogg"
+    }, {
+        "name": "flac",     
+        "extension": "\\.flac$",
+        "mimetype": "audio/aac"
+    }
+]
