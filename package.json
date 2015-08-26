@@ -14,7 +14,7 @@
     "url": "https://github.com/Aquassaut/musicaster"
   },
   "bugs": {
-      "url": "https://github.com/Aquassaut/musicaster/issues"
+    "url": "https://github.com/Aquassaut/musicaster/issues"
   },
   "keywords": [
     "podcast",
@@ -23,6 +23,7 @@
   ],
   "dependencies": {
     "fluent-ffmpeg": "^2.0.0-rc2",
+    "html-entities": "^1.1.3",
     "node-watch": "^0.3.4",
     "npmlog": "^0.1.1",
     "rss": "^1.0.0",
