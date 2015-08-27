@@ -1,15 +1,33 @@
 [
     {
-        "name": "mp3",     
-        "extension": "\\.mp3$",
+        "name": "mp3",
+        "extension": "mp3",
+        "extension_re": "\\.mp3$",
         "mimetype": "audio/mpeg"
     }, {
-        "name": "ogg",
-        "extension": "\\.ogg$",
+        "name": "ogg vorbis",
+        "extension": "ogg",
+        "extension_re": "\\.ogg$",
         "mimetype": "audio/ogg"
     }, {
-        "name": "flac",     
-        "extension": "\\.flac$",
-        "mimetype": "audio/aac"
+        "name": "FLAC",
+        "extension": "flac",
+        "extension_re": "\\.flac$",
+        "mimetype": "audio/flac"
+    }, {
+        "name": "aac",
+        "extension": "adts",
+        "extension_re": "\\.aac$",
+        "mimetype": "audio/mp4"
+    }, {
+        "name": "aac (m4a)",
+        "extension": "adts",
+        "extension_re": "\\.m4a$",
+        "mimetype": "audio/mp4"
+    }, {
+        "name": "aac (mp4)",
+        "extension": "adts",
+        "extension_re": "\\.mp4$",
+        "mimetype": "audio/mp4"
     }
 ]
