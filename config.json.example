@@ -7,5 +7,7 @@
         "description": "A description of your feed",
         "feed_url": "The URL of your feed",
         "site_url": "The URL of your website"
-    }
+    },
+    "include_subdirectories": "true|false"
+
 }
